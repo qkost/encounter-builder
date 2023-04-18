@@ -33,6 +33,15 @@ class TestEBuilder(unittest.TestCase):
         Test computation of player character
         """
 
+        # Items are used in common
+        items = {
+            "ARMOR_ABOVE_START": 3,
+            "SHIELD_ABOVE_START": 2,
+            "MAGIC_ITEM_ATTACK": 1,
+            "MAGIC_ITEM_SAVE_DC": 2,
+            "MAGIC_ITEM_SAVING_THROWS": 2
+        }
+
         # Primary caster
         pc = ebuilder.PlayerCharacter(
             "TMP",
@@ -41,7 +50,8 @@ class TestEBuilder(unittest.TestCase):
                 "CLERIC": 1,
                 "PALADIN": 2,
                 "FIGHTER": 3
-            }
+            },
+            items
         )
         self.assertEqual(pc.primary_levels, 6)
         self.assertEqual(pc.aux_levels, 2)
@@ -59,7 +69,8 @@ class TestEBuilder(unittest.TestCase):
                 "CLERIC": 1,
                 "PALADIN": 2,
                 "FIGHTER": 3
-            }
+            },
+            items
         )
         self.assertEqual(pc.primary_levels, 7)
         self.assertEqual(pc.aux_levels, 5)
@@ -77,7 +88,8 @@ class TestEBuilder(unittest.TestCase):
                 "CLERIC": 1,
                 "PALADIN": 2,
                 "FIGHTER": 3
-            }
+            },
+            items
         )
         self.assertEqual(pc.primary_levels, 11)
         self.assertEqual(pc.aux_levels, 6)
@@ -86,3 +98,6 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.aux_level_points(), 10)
         self.assertEqual(pc.junk_level_points(), 0)
         self.assertEqual(pc.level_points(), 38)
+
+        # Check item bonuses
+        self.assertEqual(pc.item_bonuses(), 5)

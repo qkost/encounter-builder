@@ -16,14 +16,22 @@ import pandas as pd
 
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+
 PRI_LEVEL_POINTS = pd.read_csv(os.path.join(
     DATA_DIR,
     "pc_primary_level_points.csv"
 )).set_index("level").to_dict()["level_points"]
+
 AUX_LEVEL_POINTS = pd.read_csv(os.path.join(
     DATA_DIR,
     "pc_aux_level_points.csv"
 )).set_index("level").to_dict()["level_points"]
+
+ITEM_BONUSES = pd.read_csv(os.path.join(
+    DATA_DIR,
+    "item_bonuses.csv"
+)).set_index("items").to_dict()["level_points"]
+
 with open(os.path.join(DATA_DIR, "class_categories.json"), "r") as CATEGORIES:
     CLASS_CATEGORIES = json.load(CATEGORIES)
 """
@@ -36,7 +44,7 @@ class PlayerCharacter():
     Class to represent a player character's power
     """
 
-    def __init__(self, name, levels):
+    def __init__(self, name, levels, items):
         """
         Constructor for player character
 
@@ -45,11 +53,14 @@ class PlayerCharacter():
         name : str
         levels : dict
             Class names and number of levels in each class
+        items : dict
+            Dictionary of items and their corresponding numerical bonuses
         """
         self.name = name
         self.primary_levels, self.aux_levels, self.junk_levels = self.extract_levels(
             levels
         )
+        self.items = items
 
     @staticmethod
     def extract_levels(levels):
@@ -162,3 +173,15 @@ class PlayerCharacter():
             + self.aux_level_points()
             + self.junk_level_points()
         )
+
+    def item_bonuses(self):
+        """
+        Compute the item bonuses
+
+        Returns
+        -------
+        item_bonuses : int
+            Total item bonuses for this character
+        """
+        item_total = sum(self.items.values())
+        return ITEM_BONUSES[item_total]
