@@ -1,0 +1,15 @@
+{
+    "ARTIFICER": "CASTER",
+    "BARBARIAN": "MARTIAL",
+    "BARD": "CASTER",
+    "CLERIC": "CASTER",
+    "DRUID": "CASTER",
+    "FIGHTER": "MARTIAL",
+    "MONK": "MARTIAL",
+    "PALADIN": "HALF-CASTER",
+    "RANGER": "HALF-CASTER",
+    "ROGUE": "MARTIAL",
+    "SORCERER": "CASTER",
+    "WARLOCK": "CASTER",
+    "WIZARD": "CASTER"
+}
