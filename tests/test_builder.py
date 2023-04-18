@@ -120,5 +120,25 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.total_level_points(), 43)
         self.assertEqual(pc.power(), 202)
 
-        # Check total party pwer
+        # Check total party stats
         self.assertEqual(party.power(), 117 + 165 + 202)
+        self.assertEqual(party.level(), (12 + 13 + 17) / 3)
+        self.assertEqual(party.tier(), 3)
+
+    def test_monsters(self):
+        """
+        Test monster calculations
+        """
+
+        tier = 3
+        monster_party = ebuilder.MonsterParty()
+
+        monster = ebuilder.Monster("YOUNG_GREEN_DRAGON", 8)
+        monster_party.add(monster)
+        self.assertEqual(monster.power(tier), 70)
+
+        monster = ebuilder.Monster("GUARD_DRAKE", 2)
+        monster_party.add(monster, 2)
+        self.assertEqual(monster.power(tier), 19)
+
+        self.assertEqual(monster_party.power(tier), 70 + 19*2)

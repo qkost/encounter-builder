@@ -83,6 +83,7 @@ class PlayerCharacter():
         self.primary_levels, self.aux_levels, self.junk_levels = self.extract_levels(
             levels
         )
+        self.level = self.primary_levels + self.aux_levels + self.junk_levels
         self.items = items
         self.advantages = {
             "PC_ADVANTAGE": pc_adv,
