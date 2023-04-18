@@ -20,5 +20,31 @@
         "ADVANTAGE": {
             "PC_ADVANTAGE": true
         }
+    },
+    {
+        "NAME": "PC3",
+        "LEVELS": {
+            "ROGUE": 5,
+            "FIGHTER": 1
+        },
+        "ITEMS": {
+            "SHIELD": 2
+        },
+        "ADVANTAGE": {
+            "PC_ADVANTAGE": true
+        }
+    },
+    {
+        "NAME": "PC4",
+        "LEVELS": {
+            "ROGUE": 5,
+            "FIGHTER": 1
+        },
+        "ITEMS": {
+            "SHIELD": 2
+        },
+        "ADVANTAGE": {
+            "PC_ADVANTAGE": true
+        }
     }
 ]

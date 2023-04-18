@@ -170,10 +170,27 @@ class TestEBuilder(unittest.TestCase):
             os.path.join(self.input_dir, "test_party.json")
         )
         self.assertEqual(party.level(), 6)
-        self.assertEqual(party.power(), 45 + 51)
+        self.assertEqual(party.power(), 45 + 51 * 3)
 
         # Create monster party from JSON
         monster_party = ebuilder.MonsterParty.from_json(
             os.path.join(self.input_dir, "test_monsters.json")
         )
         self.assertEqual(monster_party.power(party.tier()), 95 + 23*2)
+
+    def test_encounter(self):
+        """Test encounter"""
+        party = ebuilder.Party.from_json(
+            os.path.join(self.input_dir, "test_party.json")
+        )
+        monster_party = ebuilder.MonsterParty.from_json(
+            os.path.join(self.input_dir, "test_monsters.json")
+        )
+
+        encounter = ebuilder.Encounter(party, monster_party)
+        encounter.difficulty()
+
+        adventuring_day = ebuilder.AdventuringDay()
+        adventuring_day.add(encounter)
+
+        adventuring_day.fatigue()

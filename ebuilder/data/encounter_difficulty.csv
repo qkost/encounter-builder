@@ -1,0 +1,10 @@
+category,description,multiplier,cost
+Mild,The PCs will win without a scratch.,0.40,2
+Bruising,The PCs will win with minor injuries.,0.60,4
+Bloody,The PCs will win with major injuries.,0.75,6
+Brutal,The PCs will win but some may fall unconscious.,0.90,8
+Oppressive,The PCs can only win with a little luck or skill.,1.00,10
+Overwhelming,The PCs can only win with a lot of luck or skill.,1.10,13
+Crushing,The PCs can only win with an exceptional amount of luck or skill.,1.30,17
+Devastating,The PCs can only win under perfect conditions.,1.60,25
+Impossible,The PCs cannot win.,2.25,50

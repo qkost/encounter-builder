@@ -1,0 +1,7 @@
+cost,category,description
+2,Light,The PCs will use few resources.
+4,Moderate,The PCs will use some resources.
+6,Taxing,The PCs will use a large minority of their resources.
+9,Draining,The PCs will use a majority of their resources.
+12,Debilitating,The PCs will use nearly all of their resources.
+15,Exhausting,The PCs will use all of their resources.
