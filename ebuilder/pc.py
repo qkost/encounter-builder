@@ -4,7 +4,7 @@
 pc.py
 =====
 
-Player character levels
+Tools for modeling the player character's power
 
 """
 

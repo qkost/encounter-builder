@@ -32,6 +32,8 @@ class TestEBuilder(unittest.TestCase):
         """
         Test computation of player character
         """
+        # Create party
+        party = ebuilder.Party()
 
         # Items are used in common
         items = {
@@ -54,6 +56,7 @@ class TestEBuilder(unittest.TestCase):
             items,
             pc_adv=True
         )
+        party.add(pc)
         self.assertEqual(pc.primary_levels, 6)
         self.assertEqual(pc.aux_levels, 2)
         self.assertEqual(pc.junk_levels, 4)
@@ -78,6 +81,7 @@ class TestEBuilder(unittest.TestCase):
             items,
             monster_disadv=True
         )
+        party.add(pc)
         self.assertEqual(pc.primary_levels, 7)
         self.assertEqual(pc.aux_levels, 5)
         self.assertEqual(pc.junk_levels, 1)
@@ -103,6 +107,7 @@ class TestEBuilder(unittest.TestCase):
             pc_adv=True,
             monster_adv=True
         )
+        party.add(pc)
         self.assertEqual(pc.primary_levels, 11)
         self.assertEqual(pc.aux_levels, 6)
         self.assertEqual(pc.junk_levels, 0)
@@ -114,3 +119,6 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.other_bonuses(), 0)
         self.assertEqual(pc.total_level_points(), 43)
         self.assertEqual(pc.power(), 202)
+
+        # Check total party pwer
+        self.assertEqual(party.power(), 117 + 165 + 202)
