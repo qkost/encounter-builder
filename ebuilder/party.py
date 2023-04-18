@@ -83,3 +83,13 @@ class Party():
             return 4
 
         raise ValueError(f"Invalid party level: {level}")
+
+    def __str__(self):
+        return (
+            "Party\n"
+            + "-" * 80 + "\n"
+            + f"Characters: {self.count()}\n"
+            + "\n".join([pc.__str__() for pc in self.pcs])
+            + f"\nParty power: {self.power()}"
+            + "\n\n"
+        )

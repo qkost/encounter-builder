@@ -48,3 +48,6 @@ def main(party_json, monster_jsons, charge_consumables=None, onetime_consumables
     if onetime_consumables is not None:
         for consumable in onetime_consumables:
             adventuring_day.add_consumable(consumable, "CONSUMABLE")
+
+    # Print results
+    print(adventuring_day)

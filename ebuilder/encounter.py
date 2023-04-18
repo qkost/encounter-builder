@@ -88,6 +88,16 @@ class Encounter():
 
         return difficulty["category"], difficulty["description"], cost
 
+    def __str__(self):
+        return (
+            "Encounter\n"
+            + "-" * 80 + "\n"
+            + self.monster_party.__str__()
+            + f"\nMonster power: {self.monster_party.power(self.party.tier())}"
+            + f"\nDifficulty: {self.difficulty()}"
+            + "\n"
+        )
+
 
 class AdventuringDay():
     """Class for modeling an adventuring day."""
@@ -144,3 +154,12 @@ class AdventuringDay():
         ].iloc[-1]
 
         return fatigue["category"], fatigue["description"], total_cost
+
+    def __str__(self):
+        return (
+            self.party.__str__()
+            + "\n".join([encounter.__str__() for encounter in self.encounters])
+            + "\nAdventuring Day\n"
+            + "-" * 80 + "\n"
+            + f"{self.fatigue()}"
+        )

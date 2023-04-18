@@ -201,11 +201,13 @@ class TestEBuilder(unittest.TestCase):
 
     def test_main(self):
         """Test main function of encounter builder"""
+        print("\n\n\n")
         ebuilder.main(
             os.path.join(self.input_dir, "test_party.json"),
             [os.path.join(self.input_dir, "test_monsters.json")] * 2
         )
 
+        print("\n\n\n")
         ebuilder.main(
             os.path.join(self.input_dir, "test_party.json"),
             [os.path.join(self.input_dir, "test_monsters.json")] * 2,

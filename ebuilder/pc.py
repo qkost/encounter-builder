@@ -246,3 +246,11 @@ class PlayerCharacter():
             Total player character power level
         """
         return POWER[self.total_level_points()]
+
+    def __str__(self):
+        return (
+            f"{self.name}, "
+            + f"Level {self.level} {self.primary_levels, self.aux_levels, self.junk_levels}, "
+            + f"LP {self.total_level_points()}, "
+            + f"Power {self.power()}"
+        )

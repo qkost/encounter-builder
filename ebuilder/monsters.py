@@ -68,6 +68,12 @@ class Monster():
         """
         return MONSTER_POWER[f"tier{tier}"][self.cr_eff]
 
+    def __str__(self):
+        return (
+            f"{self.name}, "
+            + f"CR {self.cr} ({self.cr_eff} eff.)"
+        )
+
 
 class MonsterParty():
     """Class for modeling a party of monsters"""
@@ -101,6 +107,9 @@ class MonsterParty():
         """Add monster to the party"""
         self.monsters.append((monster, quantity))
 
+    def count(self):
+        return len(self.monsters)
+
     def power(self, tier):
         """
         Compute the total party power
@@ -116,3 +125,12 @@ class MonsterParty():
             Total power of all monsters in the party
         """
         return sum([monster.power(tier) * quantity for monster, quantity in self.monsters])
+
+    def __str__(self):
+        return (
+            f"Monsters: {self.count()}\n"
+            + "\n".join([
+                f"{monster[1]} x " + monster[0].__str__()
+                for monster in self.monsters
+            ])
+        )
