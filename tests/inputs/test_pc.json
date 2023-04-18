@@ -1,8 +1,0 @@
-{
-    "NAME": "TestCharacter",
-    "LEVELS": {
-        "DRUID": 6,
-        "CLERIC": 1,
-        "FIGHTER": 1
-    }
-}
