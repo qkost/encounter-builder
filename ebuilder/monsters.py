@@ -11,6 +11,7 @@ Tools for modeling the monster's power
 
 import os
 
+import json
 
 import pandas as pd
 
@@ -25,7 +26,7 @@ MONSTER_POWER = pd.read_csv(os.path.join(
 class Monster():
     """Class for modeling monster power"""
 
-    def __init__(self, name, cr, bypass_damage=False, ohko=False):
+    def __init__(self, name, cr, bypass_resistance=False, ohko=False):
         """
         Constructor for monster
 
@@ -35,7 +36,7 @@ class Monster():
             Name of monster
         cr : int
             Monster challenge rating
-        bypass_damage : int, optional
+        bypass_resistance : int, optional
             Flag that indicates PCs can easily bypass damage resistances or immunities.
             Defaults to False
         ohko : bool, optional
@@ -46,7 +47,7 @@ class Monster():
 
         # Effective CR
         self.cr_eff = cr
-        if bypass_damage:
+        if bypass_resistance:
             self.cr_eff -= 2
         if ohko:
             self.cr_eff += 4
@@ -76,6 +77,25 @@ class MonsterParty():
         Constructor for the monster party
         """
         self.monsters = []
+
+    @classmethod
+    def from_json(cls, json_file):
+        """Create a monster party from a JSON file"""
+        with open(json_file, "r") as json_data:
+            monster_list = json.load(json_data)
+
+        # Loop through each member in the party and add them in
+        party = MonsterParty()
+        for monster_dict in monster_list:
+            monster = Monster(
+                monster_dict["NAME"],
+                monster_dict["CR"],
+                monster_dict.get("BYPASS_RESISTANCE", False),
+                monster_dict.get("OHKO", False)
+            )
+            party.add(monster, monster_dict["QUANTITY"])
+
+        return party
 
     def add(self, monster, quantity=1):
         """Add monster to the party"""

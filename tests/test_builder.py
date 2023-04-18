@@ -150,7 +150,7 @@ class TestEBuilder(unittest.TestCase):
         monster = ebuilder.Monster(
             "YOUNG_GREEN_DRAGON",
             8,
-            bypass_damage=True,
+            bypass_resistance=True,
             ohko=True
         )
         monster_party.add(monster)
@@ -171,3 +171,9 @@ class TestEBuilder(unittest.TestCase):
         )
         self.assertEqual(party.level(), 6)
         self.assertEqual(party.power(), 45 + 51)
+
+        # Create monster party from JSON
+        monster_party = ebuilder.MonsterParty.from_json(
+            os.path.join(self.input_dir, "test_monsters.json")
+        )
+        self.assertEqual(monster_party.power(party.tier()), 95 + 23*2)

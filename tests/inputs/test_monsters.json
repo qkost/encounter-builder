@@ -1,0 +1,14 @@
+[
+    {
+        "NAME": "YOUNG_GREEN_DRAGON",
+        "CR": 8,
+        "BYPASS_RESISTANCE": true,
+        "OHKO": true,
+        "QUANTITY": 1
+    },
+    {
+        "NAME": "GUARD_DRAKE",
+        "CR": 2,
+        "QUANTITY": 2
+    }
+]
