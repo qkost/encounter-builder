@@ -45,6 +45,11 @@ class TestEBuilder(unittest.TestCase):
         }
 
         # Primary caster
+        advantages = {
+            "PC_ADVANTAGE": True,
+            "MONSTER_ADVANTAGE": False,
+            "MONSTER_DISADVANTAGE": False
+        }
         pc = ebuilder.PlayerCharacter(
             "TMP",
             {
@@ -54,7 +59,7 @@ class TestEBuilder(unittest.TestCase):
                 "FIGHTER": 3
             },
             items,
-            pc_adv=True
+            advantages
         )
         party.add(pc)
         self.assertEqual(pc.primary_levels, 6)
@@ -70,6 +75,11 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.power(), 117)
 
         # Primary martial
+        advantages = {
+            "PC_ADVANTAGE": False,
+            "MONSTER_ADVANTAGE": False,
+            "MONSTER_DISADVANTAGE": True
+        }
         pc = ebuilder.PlayerCharacter(
             "TMP",
             {
@@ -79,7 +89,7 @@ class TestEBuilder(unittest.TestCase):
                 "FIGHTER": 3
             },
             items,
-            monster_disadv=True
+            advantages
         )
         party.add(pc)
         self.assertEqual(pc.primary_levels, 7)
@@ -95,6 +105,11 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.power(), 165)
 
         # Half-caster
+        advantages = {
+            "PC_ADVANTAGE": True,
+            "MONSTER_ADVANTAGE": True,
+            "MONSTER_DISADVANTAGE": False
+        }
         pc = ebuilder.PlayerCharacter(
             "TMP",
             {
@@ -104,8 +119,7 @@ class TestEBuilder(unittest.TestCase):
                 "FIGHTER": 3
             },
             items,
-            pc_adv=True,
-            monster_adv=True
+            advantages
         )
         party.add(pc)
         self.assertEqual(pc.primary_levels, 11)
@@ -147,3 +161,13 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(monster.power(tier), 19)
 
         self.assertEqual(monster_party.power(tier), 75 + 19*2)
+
+    def test_json(self):
+        """Test creating encounters from JSON file"""
+
+        # Create party from JSON
+        party = ebuilder.Party.from_json(
+            os.path.join(self.input_dir, "test_party.json")
+        )
+        self.assertEqual(party.level(), 6)
+        self.assertEqual(party.power(), 45 + 51)

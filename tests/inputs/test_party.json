@@ -1,0 +1,24 @@
+[
+    {
+        "NAME": "PC1",
+        "LEVELS": {
+            "DRUID": 6
+        },
+        "ITEMS": {
+            "SHIELD": 2
+        }
+    },
+    {
+        "NAME": "PC2",
+        "LEVELS": {
+            "ROGUE": 5,
+            "FIGHTER": 1
+        },
+        "ITEMS": {
+            "SHIELD": 2
+        },
+        "ADVANTAGE": {
+            "PC_ADVANTAGE": true
+        }
+    }
+]
