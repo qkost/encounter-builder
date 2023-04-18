@@ -60,8 +60,11 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.primary_level_points(), 20)
         self.assertEqual(pc.aux_level_points(), 4)
         self.assertEqual(pc.junk_level_points(), 4)
-        self.assertEqual(pc.level_points(), 28)
+        self.assertEqual(pc.class_level_points(), 28)
+        self.assertEqual(pc.item_bonuses(), 5)
         self.assertEqual(pc.other_bonuses(), 2)
+        self.assertEqual(pc.total_level_points(), 35)
+        self.assertEqual(pc.power(), 117)
 
         # Primary martial
         pc = ebuilder.PlayerCharacter(
@@ -81,8 +84,11 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.primary_level_points(), 22)
         self.assertEqual(pc.aux_level_points(), 9)
         self.assertEqual(pc.junk_level_points(), 1)
-        self.assertEqual(pc.level_points(), 32)
+        self.assertEqual(pc.class_level_points(), 32)
+        self.assertEqual(pc.item_bonuses(), 5)
         self.assertEqual(pc.other_bonuses(), 3)
+        self.assertEqual(pc.total_level_points(), 40)
+        self.assertEqual(pc.power(), 165)
 
         # Half-caster
         pc = ebuilder.PlayerCharacter(
@@ -103,10 +109,8 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.primary_level_points(), 28)
         self.assertEqual(pc.aux_level_points(), 10)
         self.assertEqual(pc.junk_level_points(), 0)
-        self.assertEqual(pc.level_points(), 38)
-
-        # Check item bonuses
+        self.assertEqual(pc.class_level_points(), 38)
         self.assertEqual(pc.item_bonuses(), 5)
-
-        # Check other bonuses
         self.assertEqual(pc.other_bonuses(), 0)
+        self.assertEqual(pc.total_level_points(), 43)
+        self.assertEqual(pc.power(), 202)

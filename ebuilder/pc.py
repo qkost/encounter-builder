@@ -32,6 +32,12 @@ ITEM_BONUSES = pd.read_csv(os.path.join(
     "item_bonuses.csv"
 )).set_index("items").to_dict()["level_points"]
 
+POWER = pd.read_csv(os.path.join(
+    DATA_DIR,
+    "pc_power.csv"
+)).set_index("level_points").to_dict()["power"]
+
+
 with open(os.path.join(DATA_DIR, "class_categories.json"), "r") as CATEGORIES:
     CLASS_CATEGORIES = json.load(CATEGORIES)
 """
@@ -181,7 +187,7 @@ class PlayerCharacter():
         """
         return self.junk_levels
 
-    def level_points(self):
+    def class_level_points(self):
         """
         Compute total level points
 
@@ -224,5 +230,27 @@ class PlayerCharacter():
             other_bonuses += 2
         if self.advantages["MONSTER_DISADVANTAGE"]:
             other_bonuses += 3
-        
+
         return other_bonuses
+
+    def total_level_points(self):
+        """
+        Compute total level points
+
+        Returns
+        -------
+        level_points : int
+            Total player character level points
+        """
+        return self.class_level_points() + self.item_bonuses() + self.other_bonuses()
+
+    def power(self):
+        """
+        Compute total power level
+
+        Returns
+        -------
+        power : int
+            Total player character power level
+        """
+        return POWER[self.total_level_points()]
