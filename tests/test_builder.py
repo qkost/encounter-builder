@@ -190,7 +190,11 @@ class TestEBuilder(unittest.TestCase):
         encounter = ebuilder.Encounter(party, monster_party)
         encounter.difficulty()
 
-        adventuring_day = ebuilder.AdventuringDay()
+        adventuring_day = ebuilder.AdventuringDay(party)
         adventuring_day.add(encounter)
+        adventuring_day.add(encounter)
+
+        adventuring_day.add_consumable("RARE", "CHARGE")
+        adventuring_day.add_consumable("VERYRARE", "CONSUMABLE")
 
         adventuring_day.fatigue()

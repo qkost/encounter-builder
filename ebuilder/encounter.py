@@ -27,6 +27,12 @@ FATIGUE = pd.read_csv(os.path.join(
 ))
 
 
+CONSUMABLES = pd.read_csv(os.path.join(
+    DATA_DIR,
+    "consumables.csv"
+)).set_index("tier")
+
+
 class Encounter():
     """Class for modeling encounter difficulty"""
 
@@ -86,15 +92,38 @@ class Encounter():
 class AdventuringDay():
     """Class for modeling an adventuring day."""
 
-    def __init__(self):
+    def __init__(self, party):
         """
         Constructor for the adventuring day
+
+        Parameters
+        ----------
+        party : ebuilder.Pary
         """
+        self.party = party
         self.encounters = []
+        self.consumables = 0
 
     def add(self, encounter):
         """Add encounter to the party"""
         self.encounters.append(encounter)
+
+    def add_consumable(self, rarity, consumable_category):
+        """
+        Add consumable categories to party
+
+        Parameters
+        ----------
+        rarity : str
+            Rarity category for consumable magic item. Must be UNCOMMON, RARE, VERYRARE,
+            or LEGENDARY
+        consumable_category : str
+            Category of consumable. Must be CHARGE or CONSUMABLE
+        """
+        self.consumables += CONSUMABLES.loc[
+            self.party.tier(),
+            f"{rarity}_{consumable_category}"
+        ]
 
     def fatigue(self):
         """Compute the fatigue level for the adventuring day."""
@@ -107,9 +136,11 @@ class AdventuringDay():
         total_cost = sum(costs)
 
         # Subtract consumables
-        # TODO
+        consumable_savings = self.consumables / self.party.count()
 
         # Get the fatigue for the day
-        fatigue = FATIGUE[FATIGUE["cost"] <= total_cost].iloc[-1]
+        fatigue = FATIGUE[
+            (FATIGUE["cost"] + consumable_savings) <= total_cost
+        ].iloc[-1]
 
         return fatigue["category"], fatigue["description"], total_cost

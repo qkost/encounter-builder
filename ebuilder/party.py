@@ -59,6 +59,9 @@ class Party():
         """Add player character to the party"""
         self.pcs.append(pc)
 
+    def count(self):
+        return len(self.pcs)
+
     def power(self):
         """Compute the total party power"""
         return sum([pc.power() for pc in self.pcs])
