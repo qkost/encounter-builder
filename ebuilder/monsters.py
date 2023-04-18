@@ -25,7 +25,7 @@ MONSTER_POWER = pd.read_csv(os.path.join(
 class Monster():
     """Class for modeling monster power"""
 
-    def __init__(self, name, cr):
+    def __init__(self, name, cr, bypass_damage=False, ohko=False):
         """
         Constructor for monster
 
@@ -35,9 +35,21 @@ class Monster():
             Name of monster
         cr : int
             Monster challenge rating
+        bypass_damage : int, optional
+            Flag that indicates PCs can easily bypass damage resistances or immunities.
+            Defaults to False
+        ohko : bool, optional
+            Flag to indicate the monster can one-round knockout one or more PCs
         """
         self.name = name
         self.cr = cr
+
+        # Effective CR
+        self.cr_eff = cr
+        if bypass_damage:
+            self.cr_eff -= 2
+        if ohko:
+            self.cr_eff += 4
 
     def power(self, tier):
         """
@@ -53,7 +65,7 @@ class Monster():
         monster_power : int
             Power of monsters in the party
         """
-        return MONSTER_POWER[f"tier{tier}"][self.cr]
+        return MONSTER_POWER[f"tier{tier}"][self.cr_eff]
 
 
 class MonsterParty():

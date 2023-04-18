@@ -133,12 +133,17 @@ class TestEBuilder(unittest.TestCase):
         tier = 3
         monster_party = ebuilder.MonsterParty()
 
-        monster = ebuilder.Monster("YOUNG_GREEN_DRAGON", 8)
+        monster = ebuilder.Monster(
+            "YOUNG_GREEN_DRAGON",
+            8,
+            bypass_damage=True,
+            ohko=True
+        )
         monster_party.add(monster)
-        self.assertEqual(monster.power(tier), 70)
+        self.assertEqual(monster.power(tier), 75)
 
         monster = ebuilder.Monster("GUARD_DRAKE", 2)
         monster_party.add(monster, 2)
         self.assertEqual(monster.power(tier), 19)
 
-        self.assertEqual(monster_party.power(tier), 70 + 19*2)
+        self.assertEqual(monster_party.power(tier), 75 + 19*2)
