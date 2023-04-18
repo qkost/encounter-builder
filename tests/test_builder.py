@@ -198,3 +198,17 @@ class TestEBuilder(unittest.TestCase):
         adventuring_day.add_consumable("VERYRARE", "CONSUMABLE")
 
         adventuring_day.fatigue()
+
+    def test_main(self):
+        """Test main function of encounter builder"""
+        ebuilder.main(
+            os.path.join(self.input_dir, "test_party.json"),
+            [os.path.join(self.input_dir, "test_monsters.json")] * 2
+        )
+
+        ebuilder.main(
+            os.path.join(self.input_dir, "test_party.json"),
+            [os.path.join(self.input_dir, "test_monsters.json")] * 2,
+            ["RARE"],
+            ["VERYRARE"]
+        )
