@@ -51,7 +51,8 @@ class TestEBuilder(unittest.TestCase):
                 "PALADIN": 2,
                 "FIGHTER": 3
             },
-            items
+            items,
+            pc_adv=True
         )
         self.assertEqual(pc.primary_levels, 6)
         self.assertEqual(pc.aux_levels, 2)
@@ -60,6 +61,7 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.aux_level_points(), 4)
         self.assertEqual(pc.junk_level_points(), 4)
         self.assertEqual(pc.level_points(), 28)
+        self.assertEqual(pc.other_bonuses(), 2)
 
         # Primary martial
         pc = ebuilder.PlayerCharacter(
@@ -70,7 +72,8 @@ class TestEBuilder(unittest.TestCase):
                 "PALADIN": 2,
                 "FIGHTER": 3
             },
-            items
+            items,
+            monster_disadv=True
         )
         self.assertEqual(pc.primary_levels, 7)
         self.assertEqual(pc.aux_levels, 5)
@@ -79,6 +82,7 @@ class TestEBuilder(unittest.TestCase):
         self.assertEqual(pc.aux_level_points(), 9)
         self.assertEqual(pc.junk_level_points(), 1)
         self.assertEqual(pc.level_points(), 32)
+        self.assertEqual(pc.other_bonuses(), 3)
 
         # Half-caster
         pc = ebuilder.PlayerCharacter(
@@ -89,7 +93,9 @@ class TestEBuilder(unittest.TestCase):
                 "PALADIN": 2,
                 "FIGHTER": 3
             },
-            items
+            items,
+            pc_adv=True,
+            monster_adv=True
         )
         self.assertEqual(pc.primary_levels, 11)
         self.assertEqual(pc.aux_levels, 6)
@@ -101,3 +107,6 @@ class TestEBuilder(unittest.TestCase):
 
         # Check item bonuses
         self.assertEqual(pc.item_bonuses(), 5)
+
+        # Check other bonuses
+        self.assertEqual(pc.other_bonuses(), 0)

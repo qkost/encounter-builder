@@ -44,7 +44,15 @@ class PlayerCharacter():
     Class to represent a player character's power
     """
 
-    def __init__(self, name, levels, items):
+    def __init__(
+        self,
+        name,
+        levels,
+        items,
+        pc_adv=False,
+        monster_adv=False,
+        monster_disadv=False
+    ):
         """
         Constructor for player character
 
@@ -55,12 +63,26 @@ class PlayerCharacter():
             Class names and number of levels in each class
         items : dict
             Dictionary of items and their corresponding numerical bonuses
+        pc_adv : bool, optional
+            Flag to indicate if this player character will have advantage on all
+            attacks. Defaults to False
+        monster_adv : bool, optional
+            Flag to indicate if the monster will have advantage against this PC on all
+            attacks. Defaults to False
+        monster_disadv : bool, optional
+            Flag to indicate if the monster will have disadvantage against this PC on
+            all attacks. Defaults to False
         """
         self.name = name
         self.primary_levels, self.aux_levels, self.junk_levels = self.extract_levels(
             levels
         )
         self.items = items
+        self.advantages = {
+            "PC_ADVANTAGE": pc_adv,
+            "MONSTER_ADVANTAGE": monster_adv,
+            "MONSTER_DISADVANTAGE": monster_disadv
+        }
 
     @staticmethod
     def extract_levels(levels):
@@ -185,3 +207,22 @@ class PlayerCharacter():
         """
         item_total = sum(self.items.values())
         return ITEM_BONUSES[item_total]
+
+    def other_bonuses(self):
+        """
+        Compute the other bonuses (from advantages and disadvantages)
+
+        Returns
+        -------
+        other_bonuses : int
+            Total other bonuses for this character
+        """
+
+        other_bonuses = 0
+
+        if self.advantages["PC_ADVANTAGE"] and not self.advantages["MONSTER_ADVANTAGE"]:
+            other_bonuses += 2
+        if self.advantages["MONSTER_DISADVANTAGE"]:
+            other_bonuses += 3
+        
+        return other_bonuses
