@@ -43,13 +43,17 @@ ARG_PARSER.add_argument(
 ARG_PARSER.add_argument(
     "--charge_consumables",
     "-c",
-    help="Array of rarities of charge consumable items."
+    help="Array of rarities of charge consumable items.",
+    choices=["UNCOMMON", "RARE", "VERYRARE", "LEGENDARY"],
+    nargs="*"
 )
 
 ARG_PARSER.add_argument(
     "--onetime_consumables",
     "-o",
-    help="Array of rarities of one-time use consumable items."
+    help="Array of rarities of one-time use consumable items.",
+    choices=["UNCOMMON", "RARE", "VERYRARE", "LEGENDARY"],
+    nargs="*"
 )
 
 
