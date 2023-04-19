@@ -1,4 +1,5 @@
 cost,category,description
+0,Miniscule,The PCs will not need to use any resources.
 2,Light,The PCs will use few resources.
 4,Moderate,The PCs will use some resources.
 6,Taxing,The PCs will use a large minority of their resources.
