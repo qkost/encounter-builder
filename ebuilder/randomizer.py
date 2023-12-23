@@ -189,4 +189,8 @@ class Randomizer():
 
         if filtered.empty:
             raise RuntimeError("No remaining items after filtering.")
-        return filtered.loc[np.random.randint(0, len(filtered), num)].reset_index(drop=True)
+        
+        # Return random values
+        rng = np.random.default_rng()
+        numbers = rng.choice(len(filtered), size=num, replace=False)
+        return filtered.loc[numbers].reset_index(drop=True)
