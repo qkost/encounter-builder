@@ -91,6 +91,3 @@ if __name__ == "__main__":
             results.to_csv(ARGS.output_file, index=False)
         elif ARGS.output_file.endswith(".json"):
             results.to_json(ARGS.output_file, orient="records", lines=True)
-    
-    # from pdb import set_trace as bp
-    # bp()
