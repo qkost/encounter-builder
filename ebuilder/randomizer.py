@@ -150,9 +150,23 @@ class Randomizer():
         # Filter special cases
         filtered = df
         if (category == "item") and (kwargs.get("type", None) is not None):
-            types = kwargs.pop(type)
+            # The types of items are non-intuitive abbreviations
+            # Map them to something more sensible for humans to remember
+            types = kwargs.pop("type")
             types_r = [TYPE_MAP_REVERSED[type] for type in types]
             filtered = filtered[filtered["type"].isin(types_r)].reset_index(drop=True)
+
+        if (category == "spell") and (kwargs.get("classes", None) is not None):
+            # Classes appear as a string of class names separated by columns
+            # Just check if any of the class names are a subset of the string
+            classes = kwargs.pop("classes")
+            has_any = []
+            for _class in classes:
+                lowered = filtered["classes"].str.lower()
+                has_class = lowered.str.contains(classes[0].lower())
+                has_any.append(has_class.to_numpy())
+            has_any = np.array(has_any).sum(axis=0).astype(bool)
+            filtered = filtered[has_any].reset_index(drop=True)
 
         # Filter non-special cases
         for key, values in kwargs.items():
@@ -175,4 +189,4 @@ class Randomizer():
 
         if filtered.empty:
             raise RuntimeError("No remaining items after filtering.")
-        return filtered.loc[np.random.randint(1, len(filtered)+1, num)].reset_index(drop=True)
+        return filtered.loc[np.random.randint(0, len(filtered), num)].reset_index(drop=True)
