@@ -97,14 +97,14 @@ class ParseKwargs(argparse.Action):
         setattr(namespace, self.dest, dict())
         for value in values:
             key, value = value.split("=")
-            getattr(namespace, self.dest)[key] = value
+            getattr(namespace, self.dest)[key] = [value]
 
 ARG_PARSER.add_argument(
-    "--kwargs",
-    "-k",
+    "--filters",
+    "-f",
     nargs="*",
     action=ParseKwargs,
-    help="Output file to save results.",
+    help="Arbitrary filters for items. Provide optional arguments like 'filter=value'.",
 )
 
 
