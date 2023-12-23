@@ -39,7 +39,7 @@ TYPE_MAP = {
     "RG": "ring",
     "SC": "scroll",
     "ST": "staff",
-    "W": "wonderous_item",
+    "W": "wonderous",
     "WD": "wand"
 }
 
