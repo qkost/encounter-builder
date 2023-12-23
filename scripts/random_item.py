@@ -125,6 +125,7 @@ def pretty_print(df):
     for irow, row in df.iterrows():
         print("\n")
         print(row["name"])
+        print("_" * len(row["name"]))
         for key, val in row.items():
             if key in ["name", "text"]:
                 continue
