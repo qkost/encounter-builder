@@ -112,9 +112,9 @@ if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
 
     kwargs = vars(args)
-    additional_kwargs = kwargs.pop("kwargs")
-    if additional_kwargs is not None:
-        for k, v in additional_kwargs.items():
+    filters = kwargs.pop("filters")
+    if filters is not None:
+        for k, v in filters.items():
             kwargs[k] = v
     results = ebuilder.Randomizer().random_item(
         **kwargs
