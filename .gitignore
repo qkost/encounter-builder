@@ -164,3 +164,9 @@ defaults
 
 # Ignore the encounters directory
 encounters
+
+# Ignore XML files
+*xml
+
+# Ignore compendium CSV files
+compendium*.csv

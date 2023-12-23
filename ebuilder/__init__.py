@@ -14,3 +14,4 @@ from .main import main
 from .monsters import Monster, MonsterParty
 from .party import Party
 from .pc import PlayerCharacter
+from .randomizer import Randomizer
