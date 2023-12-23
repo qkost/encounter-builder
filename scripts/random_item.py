@@ -42,6 +42,33 @@ ARG_PARSER.add_argument(
 )
 
 ARG_PARSER.add_argument(
+    "--types",
+    "-t",
+    type=str,
+    choices=[
+    "monetary",
+    "ammo",
+    "gear",
+    "heavy_armor",
+    "light_armor",
+    "melee",
+    "medium_armor",
+    "ranged",
+    "shield",
+    "potion",
+    "rod",
+    "ring",
+    "scroll",
+    "staff",
+    "wonderous",
+    "wand"
+    ],
+    help="Item types to filter.",
+    default=None,
+    nargs="*"
+)
+
+ARG_PARSER.add_argument(
     "--output_file",
     "-o",
     type=str,
@@ -54,6 +81,7 @@ if __name__ == "__main__":
     results = ebuilder.Randomizer().random_item(
         "item",
         rarities=ARGS.rarities,
+        types=ARGS.types,
         num=ARGS.num
     ).dropna(axis=1)
     print(results)
@@ -63,3 +91,6 @@ if __name__ == "__main__":
             results.to_csv(ARGS.output_file, index=False)
         elif ARGS.output_file.endswith(".json"):
             results.to_json(ARGS.output_file, orient="records", lines=True)
+    
+    # from pdb import set_trace as bp
+    # bp()

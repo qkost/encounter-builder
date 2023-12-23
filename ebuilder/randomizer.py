@@ -24,6 +24,27 @@ COMPENDIUM_FILE = os.path.join(
     "220241_Official_Only.xml"
 )
 
+TYPE_MAP = {
+    "$": "monetary",
+    "A": "ammo",
+    "G": "gear",
+    "HA": "heavy_armor",
+    "LA": "light_armor",
+    "M": "melee",
+    "MA": "medium_armor",
+    "R": "ranged",
+    "S": "shield",
+    "P": "potion",
+    "RD": "rod",
+    "RG": "ring",
+    "SC": "scroll",
+    "ST": "staff",
+    "W": "wonderous_item",
+    "WD": "wand"
+}
+
+TYPE_MAP_REVERSED = {v: k for k, v in TYPE_MAP.items()}
+
 
 class Randomizer():
     """Class for randomizing the compendium."""
@@ -93,7 +114,7 @@ class Randomizer():
             self.compendium_dfs["category"] = pd.read_csv(self.csv_filename(category))
         return self.compendium_dfs["category"]
     
-    def random_item(self, category, rarities=None, num=1):
+    def random_item(self, category, rarities=None, types=None, num=1):
         """
         Get a random item
 
@@ -103,6 +124,8 @@ class Randomizer():
             Category of compendium
         rarities : list, optional
             List of rarities to filter by
+        rarities : list, optional
+            List of types to filter by
         num : int
             Number of random items. Defaults to 1
 
@@ -113,10 +136,15 @@ class Randomizer():
         """
         df = self.get_compendium(category)
 
+
         # filter by rarities
         filtered = df
         if rarities is not None:
             filtered = filtered[filtered["rarity"].isin(rarities)].reset_index(drop=True)
+        if types is not None:
+            types_r = [TYPE_MAP_REVERSED[type] for type in types]
+            filtered = filtered[filtered["type"].isin(types_r)].reset_index(drop=True)
 
-        
+        if filtered.empty:
+            raise RuntimeError("No remaining items after filtering.")
         return filtered.loc[np.random.randint(1, len(filtered)+1, num)].reset_index(drop=True)
