@@ -13,6 +13,10 @@ import sys
 
 import json
 
+import pandas as pd
+
+import textwrap
+
 import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir))
@@ -108,6 +112,39 @@ ARG_PARSER.add_argument(
 )
 
 
+def pretty_print(df):
+    """
+    Pretty print out a dataframe
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    """
+    pd.options.display.max_colwidth = 200
+
+    for irow, row in df.iterrows():
+        print("\n")
+        print(row["name"])
+        for key, val in row.items():
+            if key in ["name", "text"]:
+                continue
+            print(f"{key:10s}: {val}")
+
+        text_key = "text"
+        text = row["text"][2:-2]
+        text.replace("', '", ", \"")
+        text_vals = "\n\t".join(text.split(", \""))
+
+        prefix = f"{text_key:10s}: "
+        wrapper = textwrap.TextWrapper(
+            initial_indent=prefix,
+            width=200,
+            subsequent_indent=' '*len(prefix),
+            replace_whitespace=False
+        )
+        # print(f"{text_key:10s}:")
+        print(wrapper.fill(f"{text_vals}"))
+
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
 
@@ -119,7 +156,7 @@ if __name__ == "__main__":
     results = ebuilder.Randomizer().random_item(
         **kwargs
     ).dropna(axis=1)
-    print(results)
+    pretty_print(results)
 
     if args.output_file:
         if args.output_file.endswith(".csv"):

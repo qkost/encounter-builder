@@ -111,8 +111,15 @@ class Randomizer():
         """
 
         if category not in self.compendium_dfs.keys():
-            self.compendium_dfs["category"] = pd.read_csv(self.csv_filename(category))
-        return self.compendium_dfs["category"]
+            df = pd.read_csv(self.csv_filename(category))
+        
+        # Convert numeric columns to be ints
+        for col in df:
+            if pd.api.types.is_numeric_dtype(df[col].dtype):
+                df[col] = df[col].astype(pd.Int64Dtype())
+        
+        self.compendium_dfs["category"] = df
+        return df
     
     def random_item(self, category, num=1, **kwargs):
         """
