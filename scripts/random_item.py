@@ -120,7 +120,6 @@ def pretty_print(df):
     ----------
     df : pandas.DataFrame
     """
-    pd.options.display.max_colwidth = 200
 
     for irow, row in df.iterrows():
         print("\n")
@@ -139,7 +138,7 @@ def pretty_print(df):
         prefix = f"{text_key:12s}: "
         wrapper = textwrap.TextWrapper(
             initial_indent=prefix,
-            width=200,
+            width=150,
             subsequent_indent=' '*len(prefix),
             replace_whitespace=False
         )

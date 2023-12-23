@@ -116,7 +116,10 @@ class Randomizer():
         # Convert numeric columns to be ints
         for col in df:
             if pd.api.types.is_numeric_dtype(df[col].dtype):
-                df[col] = df[col].astype(pd.Int64Dtype())
+                try:
+                    df[col] = df[col].astype(pd.Int64Dtype())
+                except TypeError:
+                    pass
         
         self.compendium_dfs["category"] = df
         return df
