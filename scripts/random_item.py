@@ -134,7 +134,7 @@ def pretty_print(df):
         text_key = "text"
         text = row["text"][2:-2]
         text.replace("', '", ", \"")
-        text_vals = "\n\t".join(text.split(", \""))
+        text_vals = "\n            ".join(text.split(", \""))
 
         prefix = f"{text_key:10s}: "
         wrapper = textwrap.TextWrapper(
