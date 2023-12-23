@@ -24,6 +24,23 @@ ARG_PARSER = argparse.ArgumentParser(
 )
 
 ARG_PARSER.add_argument(
+    "--category",
+    "-c",
+    type=str,
+    help="Category of item.",
+    choices=[
+        "background",
+        "class",
+        "feat",
+        "item",
+        "monster",
+        "race",
+        "spell"
+    ],
+    default="item"
+)
+
+ARG_PARSER.add_argument(
     "--num",
     "-n",
     type=int,
@@ -32,7 +49,7 @@ ARG_PARSER.add_argument(
 )
 
 ARG_PARSER.add_argument(
-    "--rarities",
+    "--rarity",
     "-r",
     type=str,
     choices=["common", "uncommon", "rare", "very", "legendary", "artifact", "varies"],
@@ -42,7 +59,7 @@ ARG_PARSER.add_argument(
 )
 
 ARG_PARSER.add_argument(
-    "--types",
+    "--type",
     "-t",
     type=str,
     choices=[
@@ -75,19 +92,37 @@ ARG_PARSER.add_argument(
     help="Output file to save results.",
 )
 
+class ParseKwargs(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, dict())
+        for value in values:
+            key, value = value.split("=")
+            getattr(namespace, self.dest)[key] = value
+
+ARG_PARSER.add_argument(
+    "--kwargs",
+    "-k",
+    nargs="*",
+    action=ParseKwargs,
+    help="Output file to save results.",
+)
+
 
 if __name__ == "__main__":
-    ARGS = ARG_PARSER.parse_args()
+    args = ARG_PARSER.parse_args()
+
+    kwargs = vars(args)
+    additional_kwargs = kwargs.pop("kwargs")
+    if additional_kwargs is not None:
+        for k, v in additional_kwargs.items():
+            kwargs[k] = v
     results = ebuilder.Randomizer().random_item(
-        "item",
-        rarities=ARGS.rarities,
-        types=ARGS.types,
-        num=ARGS.num
+        **kwargs
     ).dropna(axis=1)
     print(results)
 
-    if ARGS.output_file:
-        if ARGS.output_file.endswith(".csv"):
-            results.to_csv(ARGS.output_file, index=False)
-        elif ARGS.output_file.endswith(".json"):
-            results.to_json(ARGS.output_file, orient="records", lines=True)
+    if args.output_file:
+        if args.output_file.endswith(".csv"):
+            results.to_csv(args.output_file, index=False)
+        elif args.output_file.endswith(".json"):
+            results.to_json(args.output_file, orient="records", lines=True)

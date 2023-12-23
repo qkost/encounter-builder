@@ -114,7 +114,7 @@ class Randomizer():
             self.compendium_dfs["category"] = pd.read_csv(self.csv_filename(category))
         return self.compendium_dfs["category"]
     
-    def random_item(self, category, rarities=None, types=None, num=1):
+    def random_item(self, category, num=1, **kwargs):
         """
         Get a random item
 
@@ -137,13 +137,31 @@ class Randomizer():
         df = self.get_compendium(category)
 
 
-        # filter by rarities
+        # Filter special cases
         filtered = df
-        if rarities is not None:
-            filtered = filtered[filtered["rarity"].isin(rarities)].reset_index(drop=True)
-        if types is not None:
+        if (category == "item") and (kwargs.get("type", None) is not None):
+            types = kwargs.pop(type)
             types_r = [TYPE_MAP_REVERSED[type] for type in types]
             filtered = filtered[filtered["type"].isin(types_r)].reset_index(drop=True)
+
+        # Filter non-special cases
+        for key, values in kwargs.items():
+            # If no value is provided, continue
+            if values is None:
+                continue
+    
+            # Let the user know if they provided a bad key
+            if key not in filtered.columns:
+                raise KeyError(
+                    f"Requested filter {key} not in available columns: "
+                    f"{list(filtered.columns)}"
+                )
+
+            # Match data types
+            filtered = (
+                filtered[filtered[key].astype(type(values[0])).isin(values)]
+                .reset_index(drop=True)
+            )
 
         if filtered.empty:
             raise RuntimeError("No remaining items after filtering.")
