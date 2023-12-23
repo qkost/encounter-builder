@@ -38,4 +38,5 @@ class TestRandomizer(unittest.TestCase):
     def test_random(self):
         """Test generating a random item"""
         rand = ebuilder.Randomizer()
-        rand.random_item("item")
+        items = rand.random_item("item", ["rare", "very"])
+
