@@ -67,7 +67,7 @@ class Randomizer():
             
             df.loc[magic, "rarity"] = (
                 df.loc[magic, "detail"].str.split(" ")
-                .apply(lambda x:next(iter(x), None))
+                .apply(lambda x: "".join(filter(str.isalnum, next(iter(x), "").lower())))
             )
 
         df.to_csv(self.csv_filename(category), index=False)
