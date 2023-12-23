@@ -129,14 +129,14 @@ def pretty_print(df):
         for key, val in row.items():
             if key in ["name", "text"]:
                 continue
-            print(f"{key:10s}: {val}")
+            print(f"{key:12s}: {val}")
 
         text_key = "text"
         text = row["text"][2:-2]
         text.replace("', '", ", \"")
-        text_vals = "\n            ".join(text.split(", \""))
+        text_vals = "\n              ".join(text.split(", \""))
 
-        prefix = f"{text_key:10s}: "
+        prefix = f"{text_key:12s}: "
         wrapper = textwrap.TextWrapper(
             initial_indent=prefix,
             width=200,
