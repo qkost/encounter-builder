@@ -58,9 +58,21 @@ class Randomizer():
         # Get all the common keys for this category
         keys = list(set().union(*[list(item.keys()) for item in self.compendium[category]]))
         entries = [{key: item.get(key, None) for key in keys} for item in self.compendium[category]]
-        pd.DataFrame(entries).to_csv(self.csv_filename(category), index=False)
+        df = pd.DataFrame(entries)
 
-    def random_item(self, category):
+        # Add any special categories
+        if category == "item":
+            df["rarity"] = None
+            magic = pd.notnull(df["magic"]) & pd.notnull(df["detail"])
+            
+            df.loc[magic, "rarity"] = (
+                df.loc[magic, "detail"].str.split(" ")
+                .apply(lambda x:next(iter(x), None))
+            )
+
+        df.to_csv(self.csv_filename(category), index=False)
+
+    def get_compendium(self, category):
         """
         Get the proper compendium CSV
 
