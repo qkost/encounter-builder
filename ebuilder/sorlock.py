@@ -97,13 +97,21 @@ def buy_sorcery_points(pact_slots, pact_level, sorcery_points, sorcery_points_ma
     new_sp = spell_level_to_sorcery_points(pact_level)
     sorcery_points = min(sorcery_points + new_sp, sorcery_points_max)
     pact_slots -= 1
-    return pact_slots, sorcery_points, []
+    return [[pact_slots, sorcery_points, []]]
 
 
 def buy_spell_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max):
     # Spend sorcery points for spell slots
-    pact_slots = 0
-    return pact_slots, sorcery_points, []
+    options = []
+    for sp in range(sorcery_points + 1):
+        try:
+            sorcerer_spell_level = sorcery_points_to_spell_slot(sp)
+        except KeyError:
+            # If there is a KeyError, this means we spent an invalid number of sorcery
+            # points
+            continue
+        options.append([pact_slots, sorcery_points - sp, [sorcerer_spell_level]])
+    return options
 
 
 def spend_pact_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max):
@@ -135,17 +143,22 @@ def spend_pact_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max)
         return pact_slots, sorcery_points, []
 
     
-    options = [buy_sorcery_points, buy_spell_slots]
+    purchase_options = [buy_sorcery_points, buy_spell_slots]
 
-
-    for option in options:
-        new_pact_slots, new_sorcery_points, new_sorcer_spells = option(
+    receipts = []
+    for purchase_option in purchase_options:
+        purchases = purchase_option(
             pact_slots,
             pact_level,
             sorcery_points,
             sorcery_points_max
         )
-        return spend_pact_slots(new_pact_slots, pact_level, new_sorcery_points, sorcery_points_max)
+        for purchase in purchases:
+            new_pact_slots, new_sorcery_points, new_sorcery_spells = tuple(purchase)        
+            
+            receipts.append([new_pact_slots, new_sorcery_points, new_sorcery_spells])
+            spend_pact_slots(new_pact_slots, pact_level, new_sorcery_points, sorcery_points_max)
+    return receipts
 
 
 def sorlock_table_level(level, pact_slots, sorcery_points):
@@ -175,6 +188,3 @@ def sorlock_table_level(level, pact_slots, sorcery_points):
 
     # Spend pact slots
     results = spend_pact_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max)
-
-    from pdb import set_trace as bp
-    bp()

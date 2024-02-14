@@ -23,7 +23,7 @@ class TestSorlock(unittest.TestCase):
         """
         Test sorlock tables
         """
-        ebuilder.sorlock_table_level(8, 2, 3)
+        ebuilder.sorlock_table_level(12, 2, 6)
 
         with self.assertRaises(RuntimeError):
             ebuilder.sorlock_table_level(8, 3, 3)
