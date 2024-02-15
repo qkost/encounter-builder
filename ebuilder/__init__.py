@@ -15,4 +15,4 @@ from .monsters import Monster, MonsterParty
 from .party import Party
 from .pc import PlayerCharacter
 from .randomizer import Randomizer
-from .sorlock import sorlock_table_level
+from .sorlock import SorlockState, sorlock_table_level

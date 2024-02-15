@@ -23,12 +23,15 @@ class TestSorlock(unittest.TestCase):
         """
         Test sorlock tables
         """
-        ebuilder.sorlock_table_level(12, 2, 6)
+        state = ebuilder.SorlockState.from_level(12, sorcery_points=0)
+
+        print("")
+        print(ebuilder.sorlock_table_level(state))
 
         with self.assertRaises(RuntimeError):
-            ebuilder.sorlock_table_level(8, 3, 3)
+            ebuilder.SorlockState.from_level(8, 3, 3)
         with self.assertRaises(RuntimeError):
-            ebuilder.sorlock_table_level(8, 2, 5)
-
-
+            ebuilder.SorlockState.from_level(8, 2, 5)
+        
+        ebuilder.SorlockState(2, 3, [1, 1, 3, 5, 9], 5).spell_counts_by_level()
 

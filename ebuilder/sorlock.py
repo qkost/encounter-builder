@@ -8,6 +8,8 @@ Tools for making warlock to sorcerer conversion charts.
 
 """
 
+import pandas as pd
+
 CLASS_LEVELS = {
     7: {"WARLOCK": 5, "SORCERER": 2},
     8: {"WARLOCK": 5, "SORCERER": 3},
@@ -32,7 +34,7 @@ SPELL_LEVEL_COST = {
     2: 1,
     3: 2,
     5: 3,
-    6: 6,
+    6: 4,
     7: 5
 }
 """
@@ -92,99 +94,189 @@ def pact_magic_slots(warlock_level):
     )
 
 
-def buy_sorcery_points(pact_slots, pact_level, sorcery_points, sorcery_points_max):
-    # Spend one pact slot
-    new_sp = spell_level_to_sorcery_points(pact_level)
-    sorcery_points = min(sorcery_points + new_sp, sorcery_points_max)
-    pact_slots -= 1
-    return [[pact_slots, sorcery_points, []]]
+class SorlockState:
+
+    def __init__(
+            self,
+            pact_slots,
+            pact_level,
+            sorcerer_spells,
+            sorcery_points,
+            sorcery_point_max=None
+        ):
+        """
+        Constructor for SorlockState
+
+        Parameters
+        ----------
+        pact_slots : int
+            Number of remaining pact slots
+        pact_level : int
+            The level of the pact slots
+        sorcery_points : int
+            The current number of sorcery points
+        sorcerer_spells : list
+            List of the purchased sorcerer spells
+        sorcery_point_max : int, optional
+            The maximum number of sorcery points you can have at any one time. Defaults
+            to None
+        """
+
+        # Save attributes
+        self.pact_slots = pact_slots
+        self.pact_level = pact_level
+        self.sorcerer_spells = sorted(sorcerer_spells)
+        self.sorcery_points = sorcery_points        
+        self.sorcery_point_max = sorcery_point_max
+
+    @classmethod
+    def from_level(cls, level, pact_slots=None, sorcery_points=None):
+        # Get the sorcerer and warlock levels from the character level
+        sorcerer_level, warlock_level = level_to_sorcerer_warlock_levels(level)
+        pact_level, pact_num_slots = pact_magic_slots(warlock_level)
+        sorcery_point_max = sorcerer_level_to_num_sorcery_points(sorcerer_level)
+
+        if pact_slots is None:
+            pact_slots = pact_num_slots
+        if sorcery_points is None:
+            sorcery_points = sorcery_point_max
+
+        # Make sure the number of pact slots and sorcery points are legal
+        if pact_slots > pact_num_slots:
+            raise RuntimeError(
+                f"More pact slots than allowable. ({pact_slots} > {pact_num_slots})"
+            )
+        if sorcery_points > sorcery_point_max:
+            raise RuntimeError(
+                "More pact slots than allowable. "
+                f"({sorcery_points} > {sorcery_point_max})"
+            )
+
+        return SorlockState(
+            pact_slots,
+            pact_level,
+            [],
+            sorcery_points,
+            sorcery_point_max=sorcery_point_max
+        )
 
 
-def buy_spell_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max):
-    # Spend sorcery points for spell slots
-    options = []
-    for sp in range(sorcery_points + 1):
-        try:
-            sorcerer_spell_level = sorcery_points_to_spell_slot(sp)
-        except KeyError:
-            # If there is a KeyError, this means we spent an invalid number of sorcery
-            # points
-            continue
-        options.append([pact_slots, sorcery_points - sp, [sorcerer_spell_level]])
-    return options
+    def buy_sorcery_points(self):
+        # Spend one pact slot
+        purchased_sp = spell_level_to_sorcery_points(self.pact_level)
+
+        # Update current values
+        new_sorcery_points = min(self.sorcery_points + purchased_sp, self.sorcery_point_max)
+        new_pact_slots = self.pact_slots -1
+    
+        return [SorlockState(
+            new_pact_slots,
+            self.pact_level,
+            self.sorcerer_spells,
+            new_sorcery_points,
+            sorcery_point_max=self.sorcery_point_max
+        )]
 
 
-def spend_pact_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max):
+    def buy_spell_slots(self):
+        # Spend sorcery points for spell slots
+        options = []
+        for sp in range(self.sorcery_points + 1):
+            try:
+                sorcerer_spell_level = sorcery_points_to_spell_slot(sp)
+            except KeyError:
+                # If there is a KeyError, this means we spent an invalid number of sorcery
+                # points
+                continue
+            options.append(SorlockState(
+                self.pact_slots,
+                self.pact_level,
+                self.sorcerer_spells + [sorcerer_spell_level],
+                self.sorcery_points - sp,
+                sorcery_point_max=self.sorcery_point_max
+            ))
+
+
+        return options
+    
+    def __str__(self):
+        return (
+            f"Warlock ({self.pact_slots}x{self.pact_level}), "
+            f"Sorcerer ({self.sorcerer_spells}, {self.sorcery_points} sp)"
+        )
+
+    def spell_counts_by_level(self):
+        return [self.sorcerer_spells.count(x) for x in range(1, 10)]
+
+    def to_dict(self):
+        _dict = {f"level{level + 1}": count for level, count in enumerate(self.spell_counts_by_level())}
+        # _dict["pact_slots"] = self.pact_slots
+        # _dict["pact_level"] = self.pact_level
+        _dict["sorcery_points"] =self.sorcery_points
+        return _dict
+
+
+def spend_pact_slots(state):
     """
     Spend pact slots for sorcer spell levels and sorcery points.
 
     Parameters
     ----------
-    pact_slots : int
-        Number of remaining pact slots
-    pact_level : int
-        The level of the pact slots
-    sorcery_point : int
-        The current number of sorcery points
-    sorcery_points_max : int
-        The maximum number of sorcery points you can have at any one time
+    state : Sorlock State
+        Starting state of Sorlock with pact slots and such
 
     Returns
     -------
-    pact_slots : int
-        Number of remaining pact slots
-    sorcery_points : int
-        The current number of sorcery points
-    sorcerer_spells : list
-        List of the levels of purchased sorcerer spells
+    next_states : list
+        List of possible next states
     """
-
-    if pact_slots == 0:
-        return pact_slots, sorcery_points, []
-
     
-    purchase_options = [buy_sorcery_points, buy_spell_slots]
+    if state.pact_slots == 0:
+        return [state]
+        
+    purchase_options = [state.buy_sorcery_points, state.buy_spell_slots]
 
-    receipts = []
+    next_states = []
     for purchase_option in purchase_options:
-        purchases = purchase_option(
-            pact_slots,
-            pact_level,
-            sorcery_points,
-            sorcery_points_max
-        )
-        for purchase in purchases:
-            new_pact_slots, new_sorcery_points, new_sorcery_spells = tuple(purchase)        
-            
-            receipts.append([new_pact_slots, new_sorcery_points, new_sorcery_spells])
-            spend_pact_slots(new_pact_slots, pact_level, new_sorcery_points, sorcery_points_max)
-    return receipts
+        next_states.extend(purchase_option())
+
+    return_states = []
+    for next_state in next_states:
+        entries = spend_pact_slots(next_state)
+        for entry in entries:
+            if entry.pact_slots == 0:
+                return_states.append(entry)
+    return return_states
 
 
-def sorlock_table_level(level, pact_slots, sorcery_points):
+def sorlock_table_level(state):
     """
     Create table of all purchase options for pact slots
 
     Parameters
     ----------
-    level : int
-        Character level
-    pact_slots : int
-        The number of pact slots to spend
-    sorcery_points : int
-        The current number of sorcery points
-    """
-
-    # Get the sorcerer and warlock levels from the character level
-    sorcerer_level, warlock_level = level_to_sorcerer_warlock_levels(level)
+    state : Sorlock State
+        Starting state of Sorlock with pact slots and such
+    """    
     
-    # Make sure the number of pact slots and sorcery points are legal
-    pact_level, pact_num_slots = pact_magic_slots(warlock_level)
-    sorcery_points_max = sorcerer_level_to_num_sorcery_points(sorcerer_level)
-    if pact_slots > pact_num_slots:
-        raise RuntimeError(f"More pact slots than allowable. ({pact_slots} > {pact_num_slots})")
-    if sorcery_points > sorcery_points_max:
-        raise RuntimeError(f"More pact slots than allowable. ({sorcery_points} > {sorcery_points_max})")
-
     # Spend pact slots
-    results = spend_pact_slots(pact_slots, pact_level, sorcery_points, sorcery_points_max)
+    results = spend_pact_slots(state)
+
+    # Form dataframe
+    df = pd.DataFrame([result.to_dict() for result in results])
+
+    # Trim things up
+    df = df.drop_duplicates()
+    df = df.loc[:, (df != 0).any(axis=0)].reset_index(drop=True)
+
+
+    # https://stackoverflow.com/questions/68522283/removing-dominated-rows-from-a-pandas-dataframe-rows-with-all-values-lower-th
+    # Broadcasted comparison explanation below
+    cmp = (df.values[:, None] <= df.values).all(axis=2).sum(axis=1) == 1
+    df = df[cmp].reset_index(drop=True)
+
+    # Sort the list intelligently
+    level_cols = [col for col in df.columns if "level" in col]
+    df = df.sort_values(sorted(level_cols, reverse=True) + ["sorcery_points"]).reset_index(drop=True)
+
+    return df
