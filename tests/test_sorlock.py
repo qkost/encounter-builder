@@ -23,7 +23,7 @@ class TestSorlock(unittest.TestCase):
         """
         Test sorlock tables
         """
-        state = ebuilder.SorlockState.from_level(12, sorcery_points=0)
+        state = ebuilder.SorlockState.from_level(12, sorcery_points=6)
 
         print("")
         print(ebuilder.sorlock_table_level(state))
