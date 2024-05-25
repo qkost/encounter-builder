@@ -155,6 +155,7 @@ class Randomizer():
                     books.append("None")
             df["book"] = books
         df["book"] = df["book"].str.replace("Source: ", "")
+        df["owned"] = df["book"].apply(lambda x: x in SOURCEBOOKS_OWNED).astype(str)
 
         df.to_csv(self.csv_filename(category), index=False)
 
