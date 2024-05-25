@@ -72,6 +72,11 @@ class Randomizer():
         ----------
         category : str
             Category of compendium
+
+        Returns
+        -------
+        df : pandas.DataFrame
+            Data frame with the compendium loaded
         """
 
         if self.compendium is None:
@@ -128,6 +133,8 @@ class Randomizer():
             df["book"] = books
 
         df.to_csv(self.csv_filename(category), index=False)
+
+        return df
 
     def get_compendium(self, category):
         """
