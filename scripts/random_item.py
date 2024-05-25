@@ -131,19 +131,20 @@ def pretty_print(df):
             print(f"{key:12s}: {val}")
 
         text_key = "text"
-        text = row["text"][2:-2]
-        text.replace("', '", ", \"")
-        text_vals = "\n              ".join(text.split(", \""))
+        if text_key in row.keys():
+            text = row["text"][2:-2]
+            text.replace("', '", ", \"")
+            text_vals = "\n              ".join(text.split(", \""))
 
-        prefix = f"{text_key:12s}: "
-        wrapper = textwrap.TextWrapper(
-            initial_indent=prefix,
-            width=150,
-            subsequent_indent=' '*len(prefix),
-            replace_whitespace=False
-        )
-        # print(f"{text_key:10s}:")
-        print(wrapper.fill(f"{text_vals}"))
+            prefix = f"{text_key:12s}: "
+            wrapper = textwrap.TextWrapper(
+                initial_indent=prefix,
+                width=150,
+                subsequent_indent=' '*len(prefix),
+                replace_whitespace=False
+            )
+            # print(f"{text_key:10s}:")
+            print(wrapper.fill(f"{text_vals}"))
 
 if __name__ == "__main__":
     args = ARG_PARSER.parse_args()
