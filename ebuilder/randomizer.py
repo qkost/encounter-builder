@@ -135,6 +135,7 @@ class Randomizer():
                 else:
                     books.append("None")
             df["book"] = books
+        df["book"] = df["book"].str.replace("Source: ", "")
 
         df.to_csv(self.csv_filename(category), index=False)
 
