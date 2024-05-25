@@ -94,6 +94,7 @@ class Randomizer():
             )
         
         # Add sources
+        has_source = True
         if category in ["monster", "race"]:
             # Add monster sources
             sources = []
@@ -101,7 +102,7 @@ class Randomizer():
                 if isinstance(row["trait"], dict):
                     sources.append(row["trait"]["text"])
                 else:
-                    sources.append(row["trait"][0]["text"])
+                    sources.append(row["trait"][0]["text"][-1])
             df["source"] = sources
         elif "text" in df.columns:#"text" in df.columns:
             # All other sources are in a similar spot
@@ -112,6 +113,19 @@ class Randomizer():
                 else:
                     sources.append(row["text"][-1])
             df["source"] = sources
+        else:
+            has_source = False
+
+        # Remove page number
+        df["book"] = None
+        if has_source:
+            books = []
+            for _source in df["source"]:
+                if _source is not None:
+                    books.append(_source.split(" p."))
+                else:
+                    books.append(None)
+            df["book"] = books
 
         df.to_csv(self.csv_filename(category), index=False)
 
