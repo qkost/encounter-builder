@@ -100,14 +100,18 @@ class Randomizer():
         
         # Add sources
         has_source = True
-        if category in ["monster", "race"]:
+        if category in ["monster"]:
             # Add monster sources
             sources = []
             for irow, row in df.iterrows():
                 if isinstance(row["trait"], dict):
                     sources.append(row["trait"]["text"])
                 else:
-                    sources.append(row["trait"][0]["text"][-1])
+                    entry = row["trait"][0]["text"]
+                    if isinstance(entry, list):
+                        sources.append(entry[-1])
+                    else:
+                        sources.append(entry)
             df["source"] = sources
         elif "text" in df.columns:#"text" in df.columns:
             # All other sources are in a similar spot
