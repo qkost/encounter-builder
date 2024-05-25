@@ -92,6 +92,26 @@ class Randomizer():
                 df.loc[magic, "detail"].str.split(" ")
                 .apply(lambda x: "".join(filter(str.isalnum, next(iter(x), "").lower())))
             )
+        
+        # Add sources
+        if category in ["monster", "race"]:
+            # Add monster sources
+            sources = []
+            for irow, row in df.iterrows():
+                if isinstance(row["trait"], dict):
+                    sources.append(row["trait"]["text"])
+                else:
+                    sources.append(row["trait"][0]["text"])
+            df["source"] = sources
+        elif "text" in df.columns:#"text" in df.columns:
+            # All other sources are in a similar spot
+            sources = []
+            for irow, row in df.iterrows():
+                if row["text"] is None:
+                    sources.append(None)
+                else:
+                    sources.append(row["text"][-1])
+            df["source"] = sources
 
         df.to_csv(self.csv_filename(category), index=False)
 
