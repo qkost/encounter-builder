@@ -122,14 +122,14 @@ class Randomizer():
             has_source = False
 
         # Remove page number
-        df["book"] = None
+        df["book"] = "None"
         if has_source:
             books = []
             for _source in df["source"]:
                 if _source is not None:
-                    books.append(_source.split(" p."))
+                    books.append(_source.split(" p.")[0])
                 else:
-                    books.append(None)
+                    books.append("None")
             df["book"] = books
 
         df.to_csv(self.csv_filename(category), index=False)

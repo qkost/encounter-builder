@@ -32,8 +32,13 @@ class TestRandomizer(unittest.TestCase):
         """Test loading and parsing of XML file"""
         rand = ebuilder.Randomizer()
         categories = ["item", "race", "class", "feat", "background", "spell", "monster"]
+        sources = []
         for category in categories:
-            rand.create_csv(category)
+            df = rand.create_csv(category)
+            sources.extend(df["book"].unique())
+        
+        import pprint
+        pprint.pprint(sorted(list(set(sources))))
     
     def test_random(self):
         """Test generating a random item"""
