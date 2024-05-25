@@ -45,6 +45,25 @@ TYPE_MAP = {
 
 TYPE_MAP_REVERSED = {v: k for k, v in TYPE_MAP.items()}
 
+SOURCEBOOKS_OWNED = [
+    "Bigby Presents: Glory of the Giants",
+    "Dungeon Master's Guide",
+    "Explorer's Guide to Wildemount",
+    "Fizban's Treasury of Dragons",
+    "Ghosts of Saltmarsh",
+    "Lost Mines of Phandelver"
+    "Monster Manual",
+    "Monster Manual,",
+    "Mordenkainen Presents: Monsters of the Multiverse",
+    "Phandelver and Below: The Shattered Obelisk",
+    "Player's Handbook",
+    "Tasha's Cauldron of Everything",
+    "The Book of Many Things",
+    "The Wild Beyond the Witchlight",
+    "Xanathar's Guide to Everything",
+    "Xanathar's Guide to Everything,"
+]
+
 
 class Randomizer():
     """Class for randomizing the compendium."""
