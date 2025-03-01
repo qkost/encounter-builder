@@ -19,10 +19,9 @@ import xmltodict
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
-COMPENDIUM_FILE = os.path.join(
-    DATA_DIR,
-    "220241_Official_Only.xml"
-)
+COMPENDIUM_FILES = [
+    os.path.join(DATA_DIR, f) for f in os.listdir(DATA_DIR) if f.endswith(".xml")
+]
 
 TYPE_MAP = {
     "$": "monetary",
@@ -48,15 +47,18 @@ TYPE_MAP_REVERSED = {v: k for k, v in TYPE_MAP.items()}
 SOURCEBOOKS_OWNED = [
     "Bigby Presents: Glory of the Giants",
     "Dungeon Master's Guide",
+    "Dungeon Master's Guide 2024",
     "Explorer's Guide to Wildemount",
     "Fizban's Treasury of Dragons",
     "Ghosts of Saltmarsh",
     "Lost Mines of Phandelver"
     "Monster Manual",
     "Monster Manual,",
+    "Monster Manual 2024",
     "Mordenkainen Presents: Monsters of the Multiverse",
     "Phandelver and Below: The Shattered Obelisk",
     "Player's Handbook",
+    "Player's Handbook 2024",
     "Tasha's Cauldron of Everything",
     "The Book of Many Things",
     "The Wild Beyond the Witchlight",
@@ -99,8 +101,22 @@ class Randomizer():
         """
 
         if self.compendium is None:
-            with open(COMPENDIUM_FILE, "rb") as fd:
-                self.compendium = xmltodict.parse(fd.read())['compendium']
+            self.compendium = {}
+            for compentium_file in COMPENDIUM_FILES:
+                with open(compentium_file, "rb") as fd:
+                    compendium = xmltodict.parse(fd.read())['compendium']
+                    for key, value in compendium.items():
+                        if key in self.compendium:
+                            if isinstance(self.compendium[key], str):
+                                pass
+                            elif isinstance(self.compendium[key], list):
+                                self.compendium[key].extend(compendium[key])
+                            else:
+                                raise RuntimeError(
+                                    f"Unexpected compendium type: {type(self.compendium[key])}"
+                                )
+                        else:
+                            self.compendium[key] = compendium[key]
 
         # Get all the common keys for this category
         keys = list(set().union(*[list(item.keys()) for item in self.compendium[category]]))
@@ -123,7 +139,12 @@ class Randomizer():
             # Add monster sources
             sources = []
             for irow, row in df.iterrows():
-                if isinstance(row["trait"], dict):
+                if row["description"] is None:
+                    row["description"] = ""
+                if "Source" in row["description"]:
+                    # 2024 monster manual has the Source in description
+                    sources.append(row["description"].split("\t")[1])
+                elif isinstance(row["trait"], dict):
                     sources.append(row["trait"]["text"])
                 else:
                     entry = row["trait"][0]["text"]
