@@ -162,6 +162,12 @@ class TestEBuilder(unittest.TestCase):
 
         self.assertEqual(monster_party.power(tier), 75 + 19*2)
 
+    def test_monsters_from_names(self):
+        """Test creation of monster party from names"""
+        monster_party = ebuilder.MonsterParty.from_names([
+            "Vampire", "Vampire [2024]"
+        ])
+
     def test_json(self):
         """Test creating encounters from JSON file"""
 
@@ -199,7 +205,7 @@ class TestEBuilder(unittest.TestCase):
 
         adventuring_day.fatigue()
 
-    def test_main(self):
+    def test_main_json(self):
         """Test main function of encounter builder"""
         print("\n\n\n")
         ebuilder.main(
@@ -211,6 +217,17 @@ class TestEBuilder(unittest.TestCase):
         ebuilder.main(
             os.path.join(self.input_dir, "test_party.json"),
             [os.path.join(self.input_dir, "test_monsters.json")] * 2,
+            ["RARE"],
+            ["VERYRARE"]
+        )
+
+    def test_main_monster_names(self):
+        """Test main funciton by passing monster names instead of JSON"""
+        monsters = ["Vampire [2024]"]
+
+        ebuilder.main(
+            os.path.join(self.input_dir, "test_party.json"),
+            monsters,
             ["RARE"],
             ["VERYRARE"]
         )

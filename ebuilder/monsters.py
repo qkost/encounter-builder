@@ -15,6 +15,10 @@ import json
 
 import pandas as pd
 
+from .randomizer import Randomizer
+
+MONSTERS = Randomizer().get_compendium("monster").set_index("name")
+
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 MONSTER_POWER = pd.read_csv(os.path.join(
@@ -74,6 +78,14 @@ class Monster():
             + f"CR {self.cr} ({self.cr_eff} eff.)"
         )
 
+    @staticmethod
+    def from_name(name):
+        """Create a Monster from the Name"""
+        monster = MONSTERS.loc[name]
+        return Monster(
+            name,
+            int(monster["cr"]),
+        )
 
 class MonsterParty():
     """Class for modeling a party of monsters"""
@@ -84,8 +96,8 @@ class MonsterParty():
         """
         self.monsters = []
 
-    @classmethod
-    def from_json(cls, json_file):
+    @staticmethod
+    def from_json(json_file):
         """Create a monster party from a JSON file"""
         with open(json_file, "r") as json_data:
             monster_list = json.load(json_data)
@@ -101,6 +113,14 @@ class MonsterParty():
             )
             party.add(monster, monster_dict["QUANTITY"])
 
+        return party
+
+    @staticmethod
+    def from_names(names):
+        """Create a monster party from a list of monster names"""
+        party = MonsterParty()
+        for name in names:
+            party.add(Monster.from_name(name))
         return party
 
     def add(self, monster, quantity=1):
