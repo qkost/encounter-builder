@@ -143,7 +143,7 @@ class Randomizer():
                     row["description"] = ""
                 if "Source" in row["description"]:
                     # 2024 monster manual has the Source in description
-                    sources.append(row["description"].split("\t")[1])
+                    sources.append(row["description"].split("\t")[-1])
                 elif isinstance(row["trait"], dict):
                     sources.append(row["trait"]["text"])
                 else:
