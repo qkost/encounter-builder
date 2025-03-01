@@ -82,10 +82,15 @@ class Monster():
     def from_name(name):
         """Create a Monster from the Name"""
         monster = MONSTERS.loc[name]
-        return Monster(
-            name,
-            int(monster["cr"]),
-        )
+
+        cr = monster["cr"]
+        if "/" in cr:
+            num, den = cr.split("/")
+            cr = float(num) / float(den)
+        else:
+            cr = int(cr)
+
+        return Monster(name, cr)
 
 class MonsterParty():
     """Class for modeling a party of monsters"""
