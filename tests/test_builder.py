@@ -225,7 +225,7 @@ class TestEBuilder(unittest.TestCase):
 
     def test_main_monster_names(self):
         """Test main funciton by passing monster names instead of JSON"""
-        monsters = ["Vampire [2024]"]
+        monsters = ["Vampire [2024]", "15", 15, 1/4, "1/4"]
 
         ebuilder.main(
             os.path.join(self.input_dir, "test_party.json"),

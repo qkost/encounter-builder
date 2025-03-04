@@ -11,7 +11,7 @@ Main script for running encounters
 import os
 
 from .encounter import AdventuringDay, Encounter
-from .monsters import MonsterParty
+from .monsters import MonsterParty, Monster, cr_str_to_num
 from .party import Party
 
 
@@ -53,7 +53,18 @@ def main(
                 Encounter(party, monster_party, method=difficulty_method)
             )
     else:
-        monster_party = MonsterParty.from_names(monsters)
+        monster_party = MonsterParty()
+        for name in monsters:
+            if isinstance(name, int) or isinstance(name, float):
+                monster_party.add(Monster.from_cr(name))
+            elif name.isnumeric():
+                monster_party.add(Monster.from_cr(cr_str_to_num(name)))
+            else:
+                try:
+                    cr_str_to_num(name)
+                    monster_party.add(Monster.from_cr(cr_str_to_num(name)))
+                except ValueError:
+                    monster_party.add(Monster.from_name(name))
         adventuring_day.add(Encounter(party, monster_party, method=difficulty_method))
 
     # Add consumables

@@ -137,6 +137,13 @@ class Monster():
 
         return Monster(name, cr)
 
+    @staticmethod
+    def from_cr(cr):
+        """Create a Monster from the CR"""
+        name = f"CR {cr_num_to_str(cr)} Monster"
+
+        return Monster(name, cr)
+
 class MonsterParty():
     """Class for modeling a party of monsters"""
 
@@ -171,6 +178,14 @@ class MonsterParty():
         party = MonsterParty()
         for name in names:
             party.add(Monster.from_name(name))
+        return party
+
+    @staticmethod
+    def from_cr(names):
+        """Create a monster party from a list of CRs"""
+        party = MonsterParty()
+        for name in names:
+            party.add(Monster.from_cr(name))
         return party
 
     def add(self, monster, quantity=1):
