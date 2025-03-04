@@ -21,6 +21,14 @@ ENCOUNTER = pd.read_csv(os.path.join(
     "encounter_difficulty.csv"
 ))
 
+ENCOUNTER_2024 = pd.read_csv(os.path.join(
+    DATA_DIR,
+    "encounter_difficulty_2024.csv"
+))
+
+with open(os.path.join(DATA_DIR, "encounter_difficulty_descriptions_2024.json"), "r") as ediff_file:
+    ENCOUNTER_DESC_2024  = json.load(ediff_file)
+
 FATIGUE = pd.read_csv(os.path.join(
     DATA_DIR,
     "fatigue.csv"
@@ -36,7 +44,7 @@ CONSUMABLES = pd.read_csv(os.path.join(
 class Encounter():
     """Class for modeling encounter difficulty"""
 
-    def __init__(self, party, monster_party):
+    def __init__(self, party, monster_party, method="cr2"):
         """
         Constructor for encounter
 
@@ -46,11 +54,62 @@ class Encounter():
             Player character party
         monster_party : ebuilder.MonsterParty
             Party of monsters
+        method : str, optional
+            Method for computing difficulty. Defaults to "cr2"
         """
         self.party = party
         self.monster_party = monster_party
+        self.method = method
 
-    def difficulty(self, interpolate=True):
+    def difficulty(self, method=None, **kwargs):
+        """
+        Compute the encounter difficulty using Challenge Rating 2.0
+
+        Parameters
+        ----------
+        interpolate : bool, optional
+            Flag to interpolate the encounter cost. Defaults to True
+        method : str, optional
+            Method for computing difficulty. Defaults to self.method
+
+        Returns
+        -------
+        difficulty_category : str
+            String label for difficulty category
+        difficulty_description : str
+            Description of difficulty
+        cost : float
+            Cost of encounter
+        """
+        if method is None:
+            method = self.method
+
+        if method == "cr2":
+            return self.difficulty_cr2(**kwargs)
+        elif method == "2024":
+            return self.difficulty_2024()
+        
+        raise RuntimeError(f"Unexpected difficulty method: {method}")
+
+    def difficulty_2024(self):
+        """
+        Compute the encounter difficulty using DMG 2024
+        """
+        xp = self.monster_party.xp()
+        level = self.party.level()
+
+        difficulties = ENCOUNTER_2024[ENCOUNTER_2024["party_level"] <= level].iloc[-1]
+
+        # Get the last difficulty exceeded
+        difficulty_labels = ["low", "moderate", "high"]
+        above_threshold = [xp >= difficulties[col] for col in difficulty_labels]
+        difficulty_category = difficulty_labels[
+            len(above_threshold) - above_threshold[::-1].index(True) - 1
+        ]
+
+        return difficulty_category, ENCOUNTER_DESC_2024[difficulty_category], np.nan
+
+    def difficulty_cr2(self, interpolate=True):
         """
         Compute the encounter difficulty
 

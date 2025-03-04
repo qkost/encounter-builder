@@ -12,6 +12,8 @@ import os
 
 import json
 
+import numpy as np
+
 import unittest
 
 from .context import ebuilder
@@ -231,3 +233,29 @@ class TestEBuilder(unittest.TestCase):
             ["RARE"],
             ["VERYRARE"]
         )
+
+    def test_encounter_2024(self):
+        """
+        Test 2024 encounter building rules
+        """
+        party = ebuilder.Party.from_json(
+            os.path.join(self.input_dir, "test_party.json")
+        )
+        monster_party = ebuilder.MonsterParty.from_json(
+            os.path.join(self.input_dir, "test_monsters.json")
+        )
+
+        encounter = ebuilder.Encounter(party, monster_party)
+        encounter.difficulty(method="2024")
+
+    def test_cr_num_str_conversion(self):
+        crs = np.concatenate([
+            [0, 0.125, 0.25, 0.5],
+            np.arange(1, 30.1, 1)
+        ])
+
+        for cr in crs:
+            self.assertEqual(
+                cr,
+                ebuilder.cr_str_to_num(ebuilder.cr_num_to_str(cr))
+            )
