@@ -18,6 +18,7 @@ import pandas as pd
 from .randomizer import Randomizer
 
 MONSTERS = Randomizer().get_compendium("monster").set_index("name")
+MONSTERS.index = MONSTERS.index.str.lower()
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -129,7 +130,7 @@ class Monster():
     @staticmethod
     def from_name(name):
         """Create a Monster from the Name"""
-        monster = MONSTERS.loc[name]
+        monster = MONSTERS.loc[name.lower()]
 
         cr = monster["cr"]
         cr = cr_str_to_num(cr)

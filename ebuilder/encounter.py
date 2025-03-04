@@ -96,6 +96,15 @@ class Encounter():
     def difficulty_2024(self):
         """
         Compute the encounter difficulty using DMG 2024
+
+        Returns
+        -------
+        difficulty_category : str
+            The label for the difficulty of the encounter ('low', 'moderate', or 'high')
+        description : str
+            String difficulty for encounter
+        nx_high_difficulty : float
+            The xp divided by the 'high' difficulty threshold for this level
         """
         xp = self.monster_party.xp()
         level = self.party.level()
@@ -108,8 +117,12 @@ class Encounter():
         difficulty_category = difficulty_labels[
             len(above_threshold) - above_threshold[::-1].index(True) - 1
         ]
+        
+        
+        # Get number of times greater than threshold
+        nx_high_difficulty = xp / difficulties["high"] 
 
-        return difficulty_category, ENCOUNTER_DESC_2024[difficulty_category], np.nan
+        return difficulty_category, ENCOUNTER_DESC_2024[difficulty_category], nx_high_difficulty
 
     def difficulty_cr2(self, interpolate=True):
         """
