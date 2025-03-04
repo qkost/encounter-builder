@@ -61,7 +61,7 @@ ARG_PARSER.add_argument(
     "-d",
     help="Method for computing encounter difficulty.",
     choices=["cr2", "2024"],
-    default="cr2"
+    default="2024"
 )
 
 

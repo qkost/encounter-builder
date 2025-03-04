@@ -110,10 +110,13 @@ class Encounter():
         level = self.party.level()
 
         difficulties = ENCOUNTER_2024[ENCOUNTER_2024["party_level"] <= level].iloc[-1]
+    
+        # Scale the XP by number of party members
+        difficulty_labels = ["low", "moderate", "high"]
+        difficulties[difficulty_labels] *= len(self.party)
 
         # Get the last difficulty exceeded
-        difficulty_labels = ["low", "moderate", "high"]
-        above_threshold = [xp >= difficulties[col] for col in difficulty_labels]
+        above_threshold = [xp >= difficulties[col]  for col in difficulty_labels]
         difficulty_category = difficulty_labels[
             len(above_threshold) - above_threshold[::-1].index(True) - 1
         ]

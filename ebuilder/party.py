@@ -26,6 +26,9 @@ class Party():
         """
         self.pcs = []
 
+    def __len__(self):
+        return len(self.pcs)
+
     @classmethod
     def from_json(cls, json_file):
         """Create a party from a JSON file"""
