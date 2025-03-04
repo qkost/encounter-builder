@@ -15,7 +15,13 @@ from .monsters import MonsterParty
 from .party import Party
 
 
-def main(party_json, monsters, charge_consumables=None, onetime_consumables=None):
+def main(
+        party_json,
+        monsters,
+        charge_consumables=None,
+        onetime_consumables=None,
+        difficulty_method="cr2"
+    ):
     """
     Main script for encounter builing
 
@@ -31,6 +37,8 @@ def main(party_json, monsters, charge_consumables=None, onetime_consumables=None
     onetime_consumables : list of str, optional
         List of rarities (UNCOMMON, RARE, VERYRARE, LEGENDARY) of consumable magic items
         that are one-time use only
+    difficulty_method : str, optional
+        Method for computing difficulty. Defaults to "cr2"
     """
 
     # Build party
@@ -41,10 +49,12 @@ def main(party_json, monsters, charge_consumables=None, onetime_consumables=None
     if os.path.isfile(monsters[0]):
         for monster_json in monsters:
             monster_party = MonsterParty.from_json(monster_json)
-            adventuring_day.add(Encounter(party, monster_party))
+            adventuring_day.add(
+                Encounter(party, monster_party, method=difficulty_method)
+            )
     else:
         monster_party = MonsterParty.from_names(monsters)
-        adventuring_day.add(Encounter(party, monster_party))
+        adventuring_day.add(Encounter(party, monster_party, method=difficulty_method))
 
     # Add consumables
     if charge_consumables is not None:

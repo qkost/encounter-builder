@@ -56,6 +56,14 @@ ARG_PARSER.add_argument(
     nargs="*"
 )
 
+ARG_PARSER.add_argument(
+    "--difficulty_method",
+    "-d",
+    help="Method for computing encounter difficulty.",
+    choices=["cr2", "2024"],
+    default="2024"
+)
+
 
 if __name__ == "__main__":
     ARGS = ARG_PARSER.parse_args()
@@ -65,5 +73,6 @@ if __name__ == "__main__":
         ARGS.party,
         ARGS.encounters,
         ARGS.charge_consumables,
-        ARGS.onetime_consumables
+        ARGS.onetime_consumables,
+        ARGS.difficulty_method
     )

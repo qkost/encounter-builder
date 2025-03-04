@@ -44,7 +44,7 @@ CONSUMABLES = pd.read_csv(os.path.join(
 class Encounter():
     """Class for modeling encounter difficulty"""
 
-    def __init__(self, party, monster_party, method="cr2"):
+    def __init__(self, party, monster_party, method=None):
         """
         Constructor for encounter
 
@@ -59,6 +59,8 @@ class Encounter():
         """
         self.party = party
         self.monster_party = monster_party
+        if method is None:
+            method = "cr2"
         self.method = method
 
     def difficulty(self, method=None, **kwargs):
@@ -198,9 +200,17 @@ class AdventuringDay():
         """Compute the fatigue level for the adventuring day."""
 
         costs = []
+        any_not_cr2 = False
         for encounter in self.encounters:
             _, _, cost = encounter.difficulty()
+            if encounter.method != "cr2":
+                any_not_cr2 = True
             costs.append(cost)
+
+        # If any encounters aren't using the CR2.0 method, this
+        # calculation isn't valid.
+        if any_not_cr2:
+            return "N/A", "N/A", np.nan
 
         total_cost = sum(costs)
 
