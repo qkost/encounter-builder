@@ -39,7 +39,7 @@ TYPE_MAP = {
     "SC": "scroll",
     "ST": "staff",
     "W": "wonderous",
-    "WD": "wand"
+    "WD": "wand",
 }
 
 TYPE_MAP_REVERSED = {v: k for k, v in TYPE_MAP.items()}
@@ -51,8 +51,7 @@ SOURCEBOOKS_OWNED = [
     "Explorer's Guide to Wildemount",
     "Fizban's Treasury of Dragons",
     "Ghosts of Saltmarsh",
-    "Lost Mines of Phandelver"
-    "Monster Manual",
+    "Lost Mines of Phandelver" "Monster Manual",
     "Monster Manual,",
     "Monster Manual 2024",
     "Mordenkainen Presents: Monsters of the Multiverse",
@@ -63,11 +62,11 @@ SOURCEBOOKS_OWNED = [
     "The Book of Many Things",
     "The Wild Beyond the Witchlight",
     "Xanathar's Guide to Everything",
-    "Xanathar's Guide to Everything,"
+    "Xanathar's Guide to Everything,",
 ]
 
 
-class Randomizer():
+class Randomizer:
     """Class for randomizing the compendium."""
 
     def __init__(self):
@@ -84,7 +83,6 @@ class Randomizer():
         """Get the filename for a CSV for a given category."""
         return os.path.join(DATA_DIR, f"compendium_{category}.csv")
 
-    
     def create_csv(self, category):
         """
         Create a CSV file for a given category
@@ -104,7 +102,7 @@ class Randomizer():
             self.compendium = {}
             for compentium_file in COMPENDIUM_FILES:
                 with open(compentium_file, "rb") as fd:
-                    compendium = xmltodict.parse(fd.read())['compendium']
+                    compendium = xmltodict.parse(fd.read())["compendium"]
                     for key, value in compendium.items():
                         if key in self.compendium:
                             if isinstance(self.compendium[key], str):
@@ -119,27 +117,35 @@ class Randomizer():
                             self.compendium[key] = compendium[key]
 
         # Get all the common keys for this category
-        keys = list(set().union(*[list(item.keys()) for item in self.compendium[category]]))
-        entries = [{key: item.get(key, None) for key in keys} for item in self.compendium[category]]
+        keys = list(
+            set().union(*[list(item.keys()) for item in self.compendium[category]])
+        )
+        entries = [
+            {key: item.get(key, None) for key in keys}
+            for item in self.compendium[category]
+        ]
         df = pd.DataFrame(entries)
 
         # Add any special categories
         if category == "item":
             df["rarity"] = None
             magic = pd.notnull(df["magic"]) & pd.notnull(df["detail"])
-            
+
             df.loc[magic, "rarity"] = (
-                df.loc[magic, "detail"].str.split(" ")
-                .apply(lambda x: "".join(filter(str.isalnum, next(iter(x), "").lower())))
+                df.loc[magic, "detail"]
+                .str.split(" ")
+                .apply(
+                    lambda x: "".join(filter(str.isalnum, next(iter(x), "").lower()))
+                )
             )
-        
+
         # Add sources
         has_source = True
         if category in ["monster"]:
             # Add monster sources
             sources = []
             for irow, row in df.iterrows():
-                if row["description"] is None:
+                if row["description"] is None or isinstance(row["description"], float):
                     row["description"] = ""
                 if "Source" in row["description"]:
                     # 2024 monster manual has the Source in description
@@ -153,11 +159,13 @@ class Randomizer():
                     else:
                         sources.append(entry)
             df["source"] = sources
-        elif "text" in df.columns:#"text" in df.columns:
+        elif "text" in df.columns:  # "text" in df.columns:
             # All other sources are in a similar spot
             sources = []
             for irow, row in df.iterrows():
                 if row["text"] is None:
+                    sources.append(None)
+                elif isinstance(row["text"], float):
                     sources.append(None)
                 else:
                     sources.append(row["text"][-1])
@@ -170,12 +178,13 @@ class Randomizer():
         if has_source:
             books = []
             for _source in df["source"]:
-                if _source is not None:
+                if _source is not None and not isinstance(_source, float):
                     books.append(_source.split(" p.")[0])
                 else:
                     books.append("None")
             df["book"] = books
         df["book"] = df["book"].str.replace("Source: ", "")
+        df["book"] = df["book"].str.replace("Source:\t", "")
         df["owned"] = df["book"].apply(lambda x: x in SOURCEBOOKS_OWNED).astype(str)
 
         df.to_csv(self.csv_filename(category), index=False)
@@ -190,7 +199,7 @@ class Randomizer():
         ----------
         category : str
             Category of compendium
-        
+
         Returns
         -------
         compendium : pandas.DataFrame
@@ -199,7 +208,7 @@ class Randomizer():
 
         if category not in self.compendium_dfs.keys():
             df = pd.read_csv(self.csv_filename(category))
-        
+
         # Convert numeric columns to be ints
         for col in df:
             if pd.api.types.is_numeric_dtype(df[col].dtype):
@@ -207,10 +216,10 @@ class Randomizer():
                     df[col] = df[col].astype(pd.Int64Dtype())
                 except TypeError:
                     pass
-        
+
         self.compendium_dfs["category"] = df
         return df
-    
+
     def random_item(self, category, num=1, **kwargs):
         """
         Get a random item
@@ -232,7 +241,6 @@ class Randomizer():
             Random items
         """
         df = self.get_compendium(category)
-
 
         # Filter special cases
         filtered = df
@@ -260,7 +268,7 @@ class Randomizer():
             # If no value is provided, continue
             if values is None:
                 continue
-    
+
             # Let the user know if they provided a bad key
             if key not in filtered.columns:
                 raise KeyError(
@@ -269,14 +277,13 @@ class Randomizer():
                 )
 
             # Match data types
-            filtered = (
-                filtered[filtered[key].astype(type(values[0])).isin(values)]
-                .reset_index(drop=True)
-            )
+            filtered = filtered[
+                filtered[key].astype(type(values[0])).isin(values)
+            ].reset_index(drop=True)
 
         if filtered.empty:
             raise RuntimeError("No remaining items after filtering.")
-        
+
         # Return random values
         rng = np.random.default_rng()
         numbers = rng.choice(len(filtered), size=num, replace=False)
